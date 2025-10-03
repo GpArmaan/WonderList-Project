@@ -1,0 +1,33 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WonderList</title>
+</head> -->
+<% layout("/layouts/boilerplate") %>
+<body>
+    <h3 class="mt-3 mb-3">Listing Details</h3>
+
+    <div class="card">
+        <div class="show-card row col-6 offset-3">
+            <img src="<%=ListingDetails.image.url%>" class="card-img-top" alt="listing image">
+            <div class="card-body">
+                <p><b><%=ListingDetails.title%></b></p>
+                <p><%=ListingDetails.description%></p>
+                <p><%=ListingDetails.location%></p>
+                <p>&#8377; <%=ListingDetails.price.toLocaleString("en-IN")%></p>
+                <p><%=ListingDetails.country%></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="show-btns">
+        <button class="col-1 offset-3 edit-btn btn btn-dark"><a class="show-delete-btn" href="/listings/<%=ListingDetails._id%>/edit">Edit</a></button>
+        <form method="post" action="/listings/<%=ListingDetails._id%>?_method=DELETE" class="col-1 delete-btn">
+            <button class="btn btn-dark">Delete</a></button>
+        </form>
+    </div>
+    <br>
+</body>
+<!-- </html> -->

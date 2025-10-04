@@ -4,6 +4,9 @@ const Listing=require("./Models/Listing.js");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
+const asyncWrap=require("./utils/asyncWrap.js");
+const expressError=require("./utils/expressError.js");
+const schema=require("./schema.js");
 
 const app=express();
 const port=5000;
@@ -30,9 +33,9 @@ app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
 //route for creating a new listing
-app.get("/listings/new",async (req,res)=>{
+app.get("/listings/new",asyncWrap(async (req,res)=>{
     res.render("listings/new.ejs");
-})
+}))
 
 
 //route to view the listing in details
@@ -43,13 +46,15 @@ app.get("/listings/:id",async (req,res)=>{
 })
 
 //route for posting the new listing
-app.post("/listings",async (req,res)=>{
+app.post("/listings",asyncWrap(async (req,res)=>{
+    let result=schema.validate(req.body);
+    console.log(result);
     const newListing=new Listing(req.body.listing);
     await newListing.save();
     // let newListing=req.body.listing; //object is returned in json format
     console.log(newListing);
     res.redirect("/listings")
-})
+}))
 
 //route for editing the listings
 app.get("/listings/:id/edit", async(req,res)=>{
@@ -73,6 +78,8 @@ app.delete("/listings/:id",async (req,res)=>{
     res.redirect("/listings");
 })
 
+
+
 //route to show all the listings present
 app.get("/listings",async(req,res)=>{
     const allListings=await Listing.find({});
@@ -91,6 +98,19 @@ app.get("/listings",async(req,res)=>{
 //     console.log("Sample was saved");
 //     res.send("Testing Success");
 // })
+
+
+//when a route which is not defined is called then it will pass on the status code and the message to the error handler middleware
+app.all(/.*/,(req,res,next)=>{
+    next(new expressError(404,"Page not found"));
+});
+
+//error handler middleware function to catch the error and show the error
+app.use((err,req,res,next)=>{
+    let {statusCode=500,message="Something went wrong"}=err;
+    res.status(statusCode).render("error.ejs",{message});
+})
+
 
 app.listen(port,()=>{
     console.log("Listening on port 5000");

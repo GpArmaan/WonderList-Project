@@ -29,5 +29,23 @@
         </form>
     </div>
     <br>
+    <hr>
+    <div class="review mb-4">
+        <h4>Leave a review</h4>
+        <form action="/listings/<%=ListingDetails._id%>/reviews" method="POST" novalidate class="needs-validation">
+            <div>
+                <label for="rating" class="form-label">Example range</label>
+                <input type="range" min="0" max="5" step="1" class="form-range" id="rating" name="review[rating]">
+            </div>
+            <div class="mb-3">
+                <label for="comment" class="form-label">Add a comment</label>
+                <textarea name="review[comment]" id="comment" class="form-control" rows="5" cols="30" required></textarea>
+                <div class="invalid-feedback">
+                    Please type a review to submit
+                </div>
+            </div>
+            <button class="btn btn-outline-dark col-2 offset-5">Submit</button>
+        </form>
+    </div>
 </body>
 <!-- </html> -->

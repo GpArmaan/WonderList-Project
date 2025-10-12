@@ -1,12 +1,13 @@
 const express=require("express");
 const mongoose=require("mongoose");
 const Listing=require("./Models/Listing.js");
+const Review=require("./Models/reviews.js");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const asyncWrap=require("./utils/asyncWrap.js");
 const expressError=require("./utils/expressError.js");
-const schema=require("./schema.js");
+const {listingSchema,reviewSchema}=require("./schema.js");
 
 const app=express();
 const port=5000;
@@ -47,7 +48,7 @@ app.get("/listings/:id",async (req,res)=>{
 
 //route for posting the new listing
 app.post("/listings",asyncWrap(async (req,res)=>{
-    let result=schema.validate(req.body);
+    let result=listingSchema.validate(req.body);
     console.log(result);
     const newListing=new Listing(req.body.listing);
     await newListing.save();
@@ -78,7 +79,29 @@ app.delete("/listings/:id",async (req,res)=>{
     res.redirect("/listings");
 })
 
+let validateReview=(req,res,next)=>{
+    let {error}=reviewSchema.validate(req.body);
+    if(error){
+        let errmsg=error.details.map((el)=>el.message).join(",");
+        throw new expressError(400,errMsg);
+    }
+    else{
+        next();
+    }
+}
 
+//Post route for adding review
+app.post("/listings/:id/reviews",validateReview,asyncWrap(async (req,res)=>{
+    let listing=await Listing.findById(req.params.id);
+    let newReview=new Review(req.body.review);
+    listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+
+    console.log("Review added");
+    res.send("Review added");
+}));
 
 //route to show all the listings present
 app.get("/listings",async(req,res)=>{

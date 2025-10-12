@@ -42,14 +42,14 @@ app.get("/listings/new",asyncWrap(async (req,res)=>{
 //route to view the listing in details
 app.get("/listings/:id",async (req,res)=>{
     let {id}=req.params;
-    const ListingDetails=await Listing.findById(id);
+    const ListingDetails=await Listing.findById(id).populate("reviews");
     res.render("listings/show.ejs",{ListingDetails});
 })
 
 //route for posting the new listing
 app.post("/listings",asyncWrap(async (req,res)=>{
-    let result=listingSchema.validate(req.body);
-    console.log(result);
+    // let result=listingSchema.validate(req.body);
+    // console.log(result);
     const newListing=new Listing(req.body.listing);
     await newListing.save();
     // let newListing=req.body.listing; //object is returned in json format
@@ -83,7 +83,7 @@ let validateReview=(req,res,next)=>{
     let {error}=reviewSchema.validate(req.body);
     if(error){
         let errmsg=error.details.map((el)=>el.message).join(",");
-        throw new expressError(400,errMsg);
+        throw new expressError(400,errmsg);
     }
     else{
         next();
@@ -93,7 +93,7 @@ let validateReview=(req,res,next)=>{
 //Post route for adding review
 app.post("/listings/:id/reviews",validateReview,asyncWrap(async (req,res)=>{
     let listing=await Listing.findById(req.params.id);
-    let newReview=new Review(req.body.review);
+    let newReview=new Review(req.body.reviews);
     listing.reviews.push(newReview);
 
     await newReview.save();
@@ -102,6 +102,18 @@ app.post("/listings/:id/reviews",validateReview,asyncWrap(async (req,res)=>{
     console.log("Review added");
     res.send("Review added");
 }));
+
+//Delete route for reviews
+app.delete("/listings/:id/reviews/:reviewId",asyncWrap(async(req,res)=>{
+    let {id,reviewId}=req.params;
+    let listingUpdate=await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}}) // It will remove the review from the review array of the listing collection
+    let deletedReview= await Review.findByIdAndDelete(reviewId); //it will delete the review from the review collection
+
+    console.log(listingUpdate , deletedReview);
+    // console.log(reviewId);
+
+    res.redirect(`/listings/${id}`);
+}))
 
 //route to show all the listings present
 app.get("/listings",async(req,res)=>{

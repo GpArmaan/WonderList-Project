@@ -6,7 +6,7 @@ const expressError=require("../utils/expressError.js");
 const Listing=require("../Models/Listing.js");
 
 //route for creating a new listing
-router.get("//new",asyncWrap(async (req,res)=>{
+router.get("/new",asyncWrap(async (req,res)=>{
     res.render("listings/new.ejs");
 }))
 
@@ -15,6 +15,10 @@ router.get("//new",asyncWrap(async (req,res)=>{
 router.get("/:id",async (req,res)=>{
     let {id}=req.params;
     const ListingDetails=await Listing.findById(id).populate("reviews");
+    if(!id){
+        req.flash("error","Listing Not Found");
+        res.redirect("/listings");
+    }
     res.render("listings/show.ejs",{ListingDetails});
 })
 
@@ -26,8 +30,9 @@ router.post("/",asyncWrap(async (req,res)=>{
     await newListing.save();
     // let newListing=req.body.listing; //object is returned in json format
     console.log(newListing);
-    res.redirect("/listings")
-}))
+    req.flash("success","New Listing created");
+    res.redirect("/listings");
+}));
 
 //route for editing the listings
 router.get("/:id/edit", async(req,res)=>{
@@ -40,6 +45,7 @@ router.get("/:id/edit", async(req,res)=>{
 router.put("/:id",async(req,res)=>{
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing}); // deconstructing the data into sub parts
+    req.flash("success","Listing updated");
     res.redirect("/listings");
 })
 
@@ -47,6 +53,7 @@ router.put("/:id",async(req,res)=>{
 router.delete("/:id",async (req,res)=>{
     let {id}=req.params;
     const deletedListing=await Listing.findByIdAndDelete(id);
+    req.flash("success","Listin deleted");
     console.log(deletedListing);
     res.redirect("/listings");
 })

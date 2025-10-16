@@ -1,15 +1,12 @@
 const express=require("express");
 const mongoose=require("mongoose");
-const Listing=require("./Models/Listing.js");
-const Review=require("./Models/reviews.js");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-const asyncWrap=require("./utils/asyncWrap.js");
-const expressError=require("./utils/expressError.js");
-const {listingSchema,reviewSchema}=require("./schema.js");
 const listing=require("./routes/listings.js")
 const review=require("./routes/reviews.js")
+const session=require("express-session");
+const flash=require("connect-flash");
 
 const app=express();
 const port=5000;
@@ -35,6 +32,26 @@ app.set("views",path.join(__dirname,"views"));
 app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
+const sessionOptions={
+    secret:"mysuppersecret",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now() + 7*24*60*60*1000, // this will make the cookie validity to 1 week
+        maxAge:7*24*60*60*1000,
+        httpOnly: true //used to prevent from cross scripting attack.
+    }
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+//middleware for flash 
+app.use((req,res,next)=>{
+    res.locals.success=req.flash("success");
+    res.locals.error=req.flash("error");
+    next();
+})
 
 app.use("/listings",listing);
 app.use("/listings/:id/reviews",review);

@@ -1,0 +1,11 @@
+<% if(success && success.length){%> <!--  bceause success is an array and if it is empty then also it shows it exists -->
+    <div class="alert alert-success" role="alert">
+        <%=success%>
+    </div>
+<%}%>
+
+<% if(error && error.length){%> <!--  bceause success is an array and if it is empty then also it shows it exists -->
+    <div class="alert alert-danger" role="alert">
+        <%=error%>
+    </div>
+<%}%>

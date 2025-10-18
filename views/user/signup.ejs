@@ -1,0 +1,33 @@
+<% layout("/layouts/boilerplate") %>
+<h4 class="col-8 offset-3 mt-3">SignUp at WonderList</h4>
+<div class="row mt-3">
+        <div class="col-6 offset-3">
+            <form  method="post" action="" novalidate class="needs-validation">
+
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username"  class="form-control" required>  <!--here we created an object named Listings which contains many key -->
+                    <div class="valid-feedback">
+                        Username looks good!
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" required>
+                    <div class="invalid-feedback">
+                        Please enter correct email.
+                    </div>
+                </div>
+                <br>
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password"  class="form-control" required>
+                    <div class="invalid-feedback">
+                        Please enter a password
+                    </div>
+                </div>
+                <button class="btn btn-success mt-3">SignUp</button>
+            </form>
+        </div>
+    </div>

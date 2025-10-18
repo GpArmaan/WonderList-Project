@@ -3,10 +3,14 @@ const mongoose=require("mongoose");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-const listing=require("./routes/listings.js")
-const review=require("./routes/reviews.js")
+const listingRouter=require("./routes/listings.js")
+const reviewRouter=require("./routes/reviews.js")
+const userRouter=require("./routes/user.js")
 const session=require("express-session");
 const flash=require("connect-flash");
+const User=require("./Models/user.js");
+const passport=require("passport");
+const LocalStrategy=require("passport-local"); // used for authentication strategies
 
 const app=express();
 const port=5000;
@@ -46,6 +50,8 @@ const sessionOptions={
 app.use(session(sessionOptions));
 app.use(flash());
 
+
+
 //middleware for flash 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
@@ -53,8 +59,26 @@ app.use((req,res,next)=>{
     next();
 })
 
-app.use("/listings",listing);
-app.use("/listings/:id/reviews",review);
+app.use(passport.initialize());// It will initialize the passport.
+app.use(passport.session());//It will create a passport session so that if we open same site in new tab then it will come under same session and no need to login again
+passport.use(new LocalStrategy(User.authenticate()));// It will implement the authentication strategies to the model
+
+passport.serializeUser(User.serializeUser()); // It will store all the user info in the seesion
+passport.deserializeUser(User.deserializeUser()); // It will remove all the user info in the seesion
+
+// app.get("/demouser",async(req,res)=>{
+//     let fakeUser=new User({
+//         email:"armaangupta@gmail.com",
+//         username:"Armaan"
+//     })
+//     let registereduser=await User.register(fakeUser,"helloworld");
+//     res.send(registereduser);
+//     console.log(registereduser);
+// })
+
+app.use("/listings",listingRouter);
+app.use("/listings/:id/reviews",reviewRouter);
+app.use("/",userRouter);
 
 
 // app.get("/testListing",async (req,res)=>{

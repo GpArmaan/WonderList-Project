@@ -65,6 +65,7 @@ body{
 
 .listing-card{
     border: none !important; 
+    border-radius: 2rem !important;
 }
 .card-img-top{
     border-radius: 1rem !important;

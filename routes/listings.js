@@ -15,7 +15,8 @@ router.get("/new",isLoggedIn,asyncWrap(async (req,res)=>{
 //route to view the listing in details
 router.get("/:id",async (req,res)=>{
     let {id}=req.params;
-    const ListingDetails=await Listing.findById(id).populate("reviews");
+    const ListingDetails=await Listing.findById(id).populate("reviews").populate("owner");
+    console.log(ListingDetails.owner.username);
     if(!id){
         req.flash("error","Listing Not Found");
         res.redirect("/listings");
@@ -28,6 +29,7 @@ router.post("/",asyncWrap(async (req,res)=>{
     // let result=listingSchema.validate(req.body);
     // console.log(result);
     const newListing=new Listing(req.body.listing);
+    newListing.owner=req.user._id; // We need to save the owner id whenever a new listing is being created   
     await newListing.save();
     // let newListing=req.body.listing; //object is returned in json format
     console.log(newListing);

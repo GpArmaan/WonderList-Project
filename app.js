@@ -51,20 +51,23 @@ app.use(session(sessionOptions));
 app.use(flash());
 
 
+app.use(passport.initialize());// It will initialize the passport.
+app.use(passport.session());//It will create a passport session so that if we open same site in new tab then it will come under same session and no need to login again
+passport.use(new LocalStrategy(User.authenticate()));// It will implement the authentication strategies to the model
+
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser()); // It will store all the user info in the seesion
+passport.deserializeUser(User.deserializeUser()); // It will remove all the user info in the seesion
+
 
 //middleware for flash 
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
+    res.locals.currUser=req.user; // cretes a variable that can ber accessed in the ejs template.
     next();
 })
 
-app.use(passport.initialize());// It will initialize the passport.
-app.use(passport.session());//It will create a passport session so that if we open same site in new tab then it will come under same session and no need to login again
-passport.use(new LocalStrategy(User.authenticate()));// It will implement the authentication strategies to the model
-
-passport.serializeUser(User.serializeUser()); // It will store all the user info in the seesion
-passport.deserializeUser(User.deserializeUser()); // It will remove all the user info in the seesion
 
 // app.get("/demouser",async(req,res)=>{
 //     let fakeUser=new User({

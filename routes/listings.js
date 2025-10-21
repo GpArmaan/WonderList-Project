@@ -4,7 +4,7 @@ const asyncWrap=require("../utils/asyncWrap.js");
 const {listingSchema,reviewSchema}=require("../schema.js");
 const expressError=require("../utils/expressError.js");
 const Listing=require("../Models/Listing.js");
-const {isLoggedIn}=require("../middlewares.js");
+const {isLoggedIn,isOwner}=require("../middlewares.js");
 
 //route for creating a new listing
 router.get("/new",isLoggedIn,asyncWrap(async (req,res)=>{
@@ -45,26 +45,25 @@ router.get("/:id/edit",isLoggedIn,async(req,res)=>{
 })
 
 //route for the updation
-router.put("/:id",isLoggedIn,async(req,res)=>{
+router.put("/:id",isLoggedIn,isOwner,async(req,res)=>{
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing}); // deconstructing the data into sub parts
     req.flash("success","Listing updated");
     res.redirect("/listings");
-})
+});
 
 //route to delete the listing
-router.delete("/:id",isLoggedIn,async (req,res)=>{
+router.delete("/:id",isLoggedIn,isOwner,async (req,res)=>{
     let {id}=req.params;
     const deletedListing=await Listing.findByIdAndDelete(id);
-    req.flash("success","Listin deleted");
+    req.flash("success","Listing deleted");
     console.log(deletedListing);
     res.redirect("/listings");
-})
+});
 
 //route to show all the listings present
 router.get("/",async(req,res)=>{
     const allListings=await Listing.find({});
     res.render("listings/index.ejs",{allListings});
-})
-
+});
 module.exports=router;

@@ -35,12 +35,25 @@
     <%if(currUser){%>
         <hr>
         <div class="review mb-4">
-            <h4>Leave a review</h4>
+            <h4 class="mb-3">Leave a review</h4>
             <form action="/listings/<%=ListingDetails._id%>/reviews" method="POST" novalidate class="needs-validation">
                 <div>
-                    <label for="rating" class="form-label">Example range</label>
-                    <input type="range" min="0" max="5" step="1" class="form-range" id="rating" name="reviews[rating]">
-                </div>
+                    <label for="rating" class="form-label">Rate the listing</label>
+                    <fieldset class="starability-slot">
+                        <input type="radio" id="no-rate" class="input-no-rate" name="reviews[rating]" value="1" checked aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="reviews[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="reviews[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="reviews[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="reviews[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="reviews[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                    </fieldset>
+                </div>                    
+
                 <div class="mb-3">
                     <label for="comment" class="form-label">Add a comment</label>
                     <textarea name="reviews[comments]" id="comment" class="form-control" rows="5" cols="30" required></textarea>
@@ -61,6 +74,7 @@
                         <h5 class="reviewer-name"><%=review.author.username%></h5>
                         <p class="review-comment"><%=review.comments%></p>
                         <p class="review-rating" style="color: red;"><%=review.rating%> stars</p>
+                        <p class="starability-result" data-rating="<%=review.rating%>"></p>
                     </div>
                     <form method="post" action="/listings/<%=ListingDetails._id%>/reviews/<%=review._id%>?_method=DELETE">
                         <button class="btn btn-dark mb-3 offset-4">Delete</button>

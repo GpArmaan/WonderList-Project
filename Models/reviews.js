@@ -5,7 +5,7 @@ const reviewSchema=new Schema({
     comments: String,
     rating:{
         type:Number,
-        min:1,
+        min:0,
         max:5
     },
     createdAt:{

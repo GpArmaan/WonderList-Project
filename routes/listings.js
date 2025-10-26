@@ -6,63 +6,28 @@ const expressError=require("../utils/expressError.js");
 const Listing=require("../Models/Listing.js");
 const {isLoggedIn,isOwner}=require("../middlewares.js");
 
+const listingController=require("../controllers/listing.js");
+
 //route for creating a new listing
-router.get("/new",isLoggedIn,asyncWrap(async (req,res)=>{
-    res.render("listings/new.ejs");
-}))
+router.get("/new",isLoggedIn,asyncWrap(listingController.getNew));
 
 
 //route to view the listing in details
-router.get("/:id",async (req,res)=>{
-    let {id}=req.params;
-    const ListingDetails=await Listing.findById(id).populate({path:"reviews",populate:{path:"author"},}).populate("owner");
-    if(!id){
-        req.flash("error","Listing Not Found");
-        res.redirect("/listings");
-    }
-    res.render("listings/show.ejs",{ListingDetails});
-})
+router.get("/:id",listingController.view);
 
 //route for posting the new listing
-router.post("/",asyncWrap(async (req,res)=>{
-    // let result=listingSchema.validate(req.body);
-    // console.log(result);
-    const newListing=new Listing(req.body.listing);
-    newListing.owner=req.user._id; // We need to save the owner id whenever a new listing is being created   
-    await newListing.save();
-    // let newListing=req.body.listing; //object is returned in json format
-    console.log(newListing);
-    req.flash("success","New Listing created");
-    res.redirect("/listings");
-}));
+router.post("/",asyncWrap(listingController.postNew));
 
 //route for editing the listings
-router.get("/:id/edit",isLoggedIn,async(req,res)=>{
-    let {id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("listings/edit.ejs",{listing});
-})
+router.get("/:id/edit",isLoggedIn,listingController.getEdit)
 
 //route for the updation
-router.put("/:id",isLoggedIn,isOwner,async(req,res)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,{...req.body.listing}); // deconstructing the data into sub parts
-    req.flash("success","Listing updated");
-    res.redirect("/listings");
-});
+router.put("/:id",isLoggedIn,isOwner,listingController.putEdit);
 
 //route to delete the listing
-router.delete("/:id",isLoggedIn,isOwner,async (req,res)=>{
-    let {id}=req.params;
-    const deletedListing=await Listing.findByIdAndDelete(id);
-    req.flash("success","Listing deleted");
-    console.log(deletedListing);
-    res.redirect("/listings");
-});
+router.delete("/:id",isLoggedIn,isOwner,listingController.destroyListing);
 
 //route to show all the listings present
-router.get("/",async(req,res)=>{
-    const allListings=await Listing.find({});
-    res.render("listings/index.ejs",{allListings});
-});
+router.get("/",listingController.index);
+
 module.exports=router;

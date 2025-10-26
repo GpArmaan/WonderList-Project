@@ -13,11 +13,8 @@ let listingSchema=new schema({
     },
 
     image:{
-        filename: String,
-        url: {
-            type: String,
-            default: "https://thehawaiivacationguide.com/wp-content/uploads/2023/01/Best-Beaches-in-Hawaii-1536x859.jpg"
-        }
+        url: String,
+        filename: String
     },
     location:{
         type:String

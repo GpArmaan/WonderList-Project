@@ -22,8 +22,12 @@ module.exports.getNew=async (req,res)=>{
 module.exports.postNew=async (req,res)=>{
     // let result=listingSchema.validate(req.body);
     // console.log(result);
+    let url=req.file.path;
+    let filename=req.file.filename;
     const newListing=new Listing(req.body.listing);
     newListing.owner=req.user._id; // We need to save the owner id whenever a new listing is being created   
+    newListing.image={url,filename};
+
     await newListing.save();
     // let newListing=req.body.listing; //object is returned in json format
     console.log(newListing);

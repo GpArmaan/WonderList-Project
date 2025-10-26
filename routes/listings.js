@@ -5,6 +5,9 @@ const {listingSchema,reviewSchema}=require("../schema.js");
 const expressError=require("../utils/expressError.js");
 const Listing=require("../Models/Listing.js");
 const {isLoggedIn,isOwner}=require("../middlewares.js");
+const multer=require("multer");
+const {storage}=require("../cloudConfig.js");
+const upload=multer({storage}); // It will create a folder named uploads in which the uploaded photos will be stored
 
 const listingController=require("../controllers/listing.js");
 
@@ -16,7 +19,7 @@ router.get("/new",isLoggedIn,asyncWrap(listingController.getNew));
 router.get("/:id",listingController.view);
 
 //route for posting the new listing
-router.post("/",asyncWrap(listingController.postNew));
+router.post("/",upload.single("listing[image]"),asyncWrap(listingController.postNew));
 
 //route for editing the listings
 router.get("/:id/edit",isLoggedIn,listingController.getEdit)

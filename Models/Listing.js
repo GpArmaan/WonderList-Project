@@ -34,8 +34,20 @@ let listingSchema=new schema({
     owner:{
         type:schema.Types.ObjectId,
         ref:"User"
+    },
+    geometry:{ //it is a geojson format odf mongoose used to store the coordinates and helpful in performing operations
+        type: {
+            type: String, // Don't do `{ location: { type: String } }`
+            enum: ['Point'], // 'location.type' must be 'Point'
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
     }
-})
+});
+
 
 //Mongoose middleware for deletion handelling of reviews
 listingSchema.post("findOneAndDelete",async(Listing)=>{

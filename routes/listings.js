@@ -8,6 +8,7 @@ const {isLoggedIn,isOwner}=require("../middlewares.js");
 const multer=require("multer");
 const {storage}=require("../cloudConfig.js");
 const upload=multer({storage}); // It will create a folder named uploads in which the uploaded photos will be stored
+//Now multer will upload the image into the cloud by using the variable storage which contains clod congigurations
 
 const listingController=require("../controllers/listing.js");
 
@@ -19,13 +20,13 @@ router.get("/new",isLoggedIn,asyncWrap(listingController.getNew));
 router.get("/:id",listingController.view);
 
 //route for posting the new listing
-router.post("/",upload.single("listing[image]"),asyncWrap(listingController.postNew));
+router.post("/",isLoggedIn,upload.single("listing[image]"),asyncWrap(listingController.postNew));
 
 //route for editing the listings
 router.get("/:id/edit",isLoggedIn,listingController.getEdit)
 
 //route for the updation
-router.put("/:id",isLoggedIn,isOwner,listingController.putEdit);
+router.put("/:id",isLoggedIn,isOwner,upload.single("listing[image]"),listingController.putEdit);
 
 //route to delete the listing
 router.delete("/:id",isLoggedIn,isOwner,listingController.destroyListing);

@@ -6,6 +6,10 @@
     <title>WonderList</title>
 </head> -->
 <% layout("/layouts/boilerplate") %>
+<script>
+    const mapToken="<%=process.env.MAP_TOKEN%>";
+    const coordinates=<%- JSON.stringify(ListingDetails.geometry.coordinates)%>;
+</script>
 <body>
     <h3 class="mt-3 mb-3">Listing Details</h3>
 
@@ -83,5 +87,24 @@
             <%}%>
 
     </div>
+    <div class="col-8 offset-3 mb-3">
+        <h3>Where you will be</h3>
+        <div id="map"></div>
+    </div> 
 </body>
+
+<script>
+    mapboxgl.accessToken = mapToken;
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        center: coordinates, // starting position [lng, lat]. Note that lat must be set between -90 and 90
+        zoom: 9 // starting zoom
+    });
+
+    // Create a default Marker and add it to the map.
+    const marker1 = new mapboxgl.Marker()
+        .setLngLat(coordinates) // set this as listing.geometry.coordinates
+        .addTo(map);
+</script>
+
 <!-- </html> -->

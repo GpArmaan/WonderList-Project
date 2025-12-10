@@ -121,3 +121,8 @@ body{
     text-decoration: none;
     color: #222222;
 }
+
+#map{
+    height: 400px;
+    width: 80vh;
+}

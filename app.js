@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV!="production"){
+if(process.env.NODE_ENV!="production"){  //If we are in development stage and not deploying it at production level then only we will use .env file else we will use some another environment variables.
     require("dotenv").config();
 }
 
@@ -68,7 +68,7 @@ passport.deserializeUser(User.deserializeUser()); // It will remove all the user
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
-    res.locals.currUser=req.user; // cretes a variable that can ber accessed in the ejs template.
+    res.locals.currUser=req.user; // creates a variable that can be accessed in the ejs template.
     next();
 })
 
